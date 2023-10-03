@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import Notiflix from 'notiflix';
 
 const options = {
   enableTime: true,
@@ -8,7 +9,7 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     if (selectedDates[0] < Date.now()) {
-      alert('Please choose a date in the future');
+      Notiflix.Notify.failure('Please choose a date in the future');
       startButt.disabled = true;
       return;
     }
@@ -49,14 +50,7 @@ startButt.addEventListener('click', () => {
     return;
   }
 
-  let { days, hours, minutes, seconds } = convertMs(dateToCount - Date.now());
-
-  const formattedTime = addLeadingZero(days, hours, minutes, seconds);
-
-  daysElem.textContent = formattedTime.formattedDays;
-  hoursElem.textContent = formattedTime.formattedHours;
-  minutesElem.textContent = formattedTime.formattedMinutes;
-  secondsElem.textContent = formattedTime.formattedSeconds;
+  handleDateChange();
 
   intervalId = setInterval(() => {
     if (Date.now() > dateToCount) {
@@ -64,14 +58,7 @@ startButt.addEventListener('click', () => {
       return;
     }
 
-    let { days, hours, minutes, seconds } = convertMs(dateToCount - Date.now());
-
-    const formattedTime = addLeadingZero(days, hours, minutes, seconds);
-
-    daysElem.textContent = formattedTime.formattedDays;
-    hoursElem.textContent = formattedTime.formattedHours;
-    minutesElem.textContent = formattedTime.formattedMinutes;
-    secondsElem.textContent = formattedTime.formattedSeconds;
+    handleDateChange();
   }, 1000);
 });
 
@@ -96,4 +83,15 @@ function addLeadingZero(days, hours, minutes, seconds) {
   const formattedSeconds = String(seconds).padStart(2, '0');
 
   return { formattedDays, formattedHours, formattedMinutes, formattedSeconds };
+}
+
+function handleDateChange() {
+  let { days, hours, minutes, seconds } = convertMs(dateToCount - Date.now());
+
+  const formattedTime = addLeadingZero(days, hours, minutes, seconds);
+
+  daysElem.textContent = formattedTime.formattedDays;
+  hoursElem.textContent = formattedTime.formattedHours;
+  minutesElem.textContent = formattedTime.formattedMinutes;
+  secondsElem.textContent = formattedTime.formattedSeconds;
 }
